@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 260" role="img" aria-labelledby="title desc">
+  <title id="title">広告運用のイラスト</title>
+  <desc id="desc">グラフとターゲットを描いた赤黒のイラスト</desc>
+  <rect width="420" height="260" rx="8" fill="#fff"/>
+  <rect x="36" y="40" width="198" height="178" rx="8" fill="#08090b"/>
+  <path d="M62 172l42-38 36 20 58-72" fill="none" stroke="#e60021" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="104" cy="134" r="9" fill="#fff"/>
+  <circle cx="140" cy="154" r="9" fill="#fff"/>
+  <circle cx="198" cy="82" r="9" fill="#fff"/>
+  <circle cx="320" cy="130" r="72" fill="#e60021"/>
+  <circle cx="320" cy="130" r="44" fill="#fff"/>
+  <circle cx="320" cy="130" r="18" fill="#08090b"/>
+  <path d="M320 130l58-58" stroke="#08090b" stroke-width="10" stroke-linecap="round"/>
+</svg>
