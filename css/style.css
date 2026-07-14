@@ -1209,6 +1209,19 @@ p {
 
 .episode-nav-bottom {
   margin: 22px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.episode-nav a.episode-nav__secondary {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.episode-nav a.episode-nav__secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
 }
 
 .episode-nav a {
