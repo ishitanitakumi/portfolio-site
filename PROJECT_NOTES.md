@@ -153,9 +153,11 @@ Historyページの左下に表示。
 - ただしNetflixそのもののロゴや名称は使わない
 - 上部余白は多すぎないように調整済み
 
-## Netlify反映方法
+## 公開（GitHub Pages）反映方法
 
-`outputs/self_intro_streaming_site` フォルダを丸ごとNetlifyへアップロードする。
+`outputs/self_intro_streaming_site` を GitHub リポジトリに push し、GitHub Pages で公開する（Settings → Pages で公開ブランチ／フォルダを指定）。
+
+匿名一言フォームは FormSubmit（`goals.html` の form `action`）で送信する。公開後に一度テスト送信し、確認メールのリンクを踏んで有効化する。送信先メールを隠したい場合は、有効化後に発行されるランダム別名URLに `action` を差し替える。
 
 ## 未確定・今後検討
 

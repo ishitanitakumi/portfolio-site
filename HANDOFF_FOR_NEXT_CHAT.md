@@ -49,7 +49,7 @@ python3 -m http.server 4173
 
 - HTML / CSS / Vanilla JavaScriptのみ
 - React、Vue、WordPress、CMSは未使用
-- Netlifyへフォルダごとアップロード可能な静的サイト
+- GitHub Pages で公開する静的サイト（フォルダをそのまま push 可能）
 - 黒背景、赤アクセント、動画配信サービス風
 - ブランド表記は `TAKUMI ORIGINALS`
 - タブアイコン、サイドバーアイコン、Homeイントロは `T` で統一
@@ -438,7 +438,7 @@ curl -I http://127.0.0.1:4173/js/script.js
 1. 実機スマホでHome/History/Top Skills/Goalsを再確認
 2. `PRESENTATION_NOTES.md` にスマホUI改善と画像軽量化を追記
 3. 不要な `.DS_Store` が気になる場合は削除
-4. Netlifyに再アップロード
+4. GitHub Pages へ再デプロイ（push）
 5. ブラウザキャッシュが残る場合は強制再読み込み
 
 ## 注意事項
@@ -495,5 +495,5 @@ curl -I http://127.0.0.1:4173/js/script.js
 ## 次にやるなら
 
 - 実機スマホで今回の修正（History全エピソード、Goals3カード、Top Skills）を最終確認
-- Netlifyへ再デプロイ
+- GitHub Pages へ再デプロイ（push）
 - `PRESENTATION_NOTES.md`の更新は依然未着手

@@ -51,15 +51,15 @@
         <img class="goal-mountain__img" src="assets/images/goal-long.jpg" alt="頂上に赤い旗が立つ山">
         <span class="goal-mountain__flag" aria-hidden="true"></span>
 
-        <button type="button" class="goal-stage goal-stage--short" data-stage="short" data-click-area="goals" data-click-name="short_term" data-click-label="短期" aria-expanded="false" aria-controls="goal-panel-short">
+        <button type="button" class="goal-stage goal-stage--short" data-stage="short" data-click-area="goals" data-click-name="short" data-click-label="短期" aria-expanded="false" aria-controls="goal-panel-short">
           <span>短期</span>
           <strong>研修を走りきる</strong>
         </button>
-        <button type="button" class="goal-stage goal-stage--middle" data-stage="middle" data-click-area="goals" data-click-name="middle_term" data-click-label="中期" aria-expanded="false" aria-controls="goal-panel-middle">
+        <button type="button" class="goal-stage goal-stage--middle" data-stage="middle" data-click-area="goals" data-click-name="middle" data-click-label="中期" aria-expanded="false" aria-controls="goal-panel-middle">
           <span>中期</span>
           <strong>粗利200万円以上</strong>
         </button>
-        <button type="button" class="goal-stage goal-stage--long" data-stage="long" data-click-area="goals" data-click-name="long_term" data-click-label="長期" aria-expanded="false" aria-controls="goal-panel-long">
+        <button type="button" class="goal-stage goal-stage--long" data-stage="long" data-click-area="goals" data-click-name="long" data-click-label="長期" aria-expanded="false" aria-controls="goal-panel-long">
           <span>長期</span>
           <strong>100人のマーケター</strong>
         </button>
@@ -106,9 +106,11 @@
 
     <section class="comment-cta reveal" aria-label="匿名の一言">
       <p class="comment-cta__text">よかったら一言もらえると嬉しいです（匿名でOK）<br><small>印象に残ったこと・気になったこと、なんでも</small></p>
-      <form name="impression" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="comment-form">
-        <input type="hidden" name="form-name" value="impression">
-        <p class="comment-form__hp" hidden><label>入力しないでください: <input name="bot-field"></label></p>
+      <form name="impression" method="POST" action="https://formsubmit.co/ajax/ishitani_takumi@cellmuller.com" class="comment-form">
+        <input type="hidden" name="_subject" value="自己紹介サイトに一言が届きました">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <p class="comment-form__hp" hidden><label>入力しないでください: <input name="_honey"></label></p>
         <textarea name="message" class="comment-form__input" rows="3" placeholder="ここに一言…" required></textarea>
         <button type="submit" class="comment-form__submit" data-click-area="comment" data-click-name="submit_impression" data-click-label="一言を送信">送信する</button>
         <p class="comment-form__thanks" hidden>ありがとうございます！受け取りました。</p>

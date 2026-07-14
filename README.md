@@ -26,7 +26,9 @@
 
 ## 公開方法
 
-`self_intro_streaming_site` フォルダごとNetlifyへドラッグ&ドロップします。
+`self_intro_streaming_site` フォルダを GitHub リポジトリに push し、GitHub Pages で公開します（Settings → Pages で公開ブランチ／フォルダを指定）。
+
+匿名一言フォームは FormSubmit を利用しているため、公開後に一度テスト送信し、届いた確認メールのリンクを踏んで有効化してください。
 
 ## 詳細メモ
 

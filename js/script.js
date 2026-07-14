@@ -147,11 +147,19 @@ const pushEntryChoice = (choice, method, sourceElement) => {
   if (!choice || sessionStorage.getItem("entry_choice")) return;
   sessionStorage.setItem("entry_choice", choice);
 
+  // 位置バイアス対策：入口カードで選んだ場合は「先(first)/後(second)」を記録する。
+  // 入口順はランダム化しているので、集計で位置の影響を平均化でき、
+  // 「両位置で同じ側が選ばれたか」を検証できる（発表の頑健性チェック）。
+  // 左ナビ経由(nav)はカード位置の概念が無いので "nav" とする。
+  const entryPosition = sourceElement?.dataset.entryPosition
+    || (method === "nav" ? "nav" : "");
+
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
     event: "entry_choice",
     choice,
     entry_method: method,
+    entry_position: entryPosition,
     click_area: sourceElement?.dataset.clickArea || "",
     click_name: sourceElement?.dataset.clickName || "",
     click_label: sourceElement?.dataset.clickLabel || getTrackText(sourceElement),
@@ -228,6 +236,12 @@ if (introSplash) {
       page_path: window.location.pathname
     });
     introSplash.classList.remove("is-waiting");
+    // フェードアウト完了(animationend)に依存せず、確実にsplashを閉じる保険。
+    // 背景タブ等でanimationが走らない／animationendが飛ばない場合でも黒画面を残さない。
+    // is-finished(display:none)の付与は冪等なので、animationend側と二重でも無害。
+    window.setTimeout(() => {
+      introSplash.classList.add("is-finished");
+    }, 2200);
     introStartButton?.removeEventListener("pointerdown", startIntro);
     introStartButton?.removeEventListener("touchend", startIntro);
     introStartButton?.removeEventListener("click", startIntro);
@@ -236,10 +250,12 @@ if (introSplash) {
 
   const startIntro = () => {
     if (introStarted) return;
-    playIntroSound().then((played) => {
-      if (!played) return;
-      finishIntroStart();
-    });
+    // 音声は「鳴らせたら鳴らす」だけ（撃ちっぱなし）。ファイル読み込み失敗や
+    // 端末の再生ブロックがあっても、イントロ解除＝サイト進入は必ず実行する。
+    // これを音声再生の成否に依存させると、鳴らなかった端末が黒画面で詰み、
+    // 入口フォークに到達せず entry_choice が取れないままユーザーを失う。
+    playIntroSound();
+    finishIntroStart();
   };
 
   introStartButton?.addEventListener("pointerdown", startIntro);
@@ -626,9 +642,29 @@ if (likeButton) {
   });
 }
 
+// 入口フォークの位置バイアス対策：表示順をユーザーごとにランダム化する。
+// 左=経歴・右=強みの固定順だと「経歴が勝ったのは先に読まれた(左)からでは？」を
+// 潰せない。CSSのorderで並びを入れ替え（DOMは動かさない＝チラつき無し）、
+// 各カードが「先(first)/後(second)」どちらに出たかをdatasetに記録する。
+// 順はセッション内で固定（再訪・戻る操作でも同じ人には同じ順＝一貫性）。
+const entryForkCards = Array.from(document.querySelectorAll(".entry-card"));
+if (entryForkCards.length === 2) {
+  let forkOrder = sessionStorage.getItem("entry_fork_order");
+  if (forkOrder !== "0" && forkOrder !== "1") {
+    forkOrder = Math.random() < 0.5 ? "0" : "1";
+    sessionStorage.setItem("entry_fork_order", forkOrder);
+  }
+  const reversed = forkOrder === "1";
+  entryForkCards.forEach((card, domIndex) => {
+    const positionIndex = reversed ? 1 - domIndex : domIndex; // 0=先頭に表示
+    card.style.order = String(positionIndex);
+    card.dataset.entryPosition = positionIndex === 0 ? "first" : "second";
+  });
+}
+
 // 入口フォーク（経歴／強み）の第一クリック計測：仮説A/Bを測るメインシグナル
 // 経歴=history（A・物語）/ strengths=strengths（B・武器）どちらを先に選んだか
-document.querySelectorAll(".entry-card").forEach((card) => {
+entryForkCards.forEach((card) => {
   card.addEventListener("click", () => {
     const choice = card.dataset.entryChoice || "";
     pushEntryChoice(choice, "entry_card", card);
@@ -637,18 +673,22 @@ document.querySelectorAll(".entry-card").forEach((card) => {
   });
 });
 
-// 匿名一言フォーム（Netlify Forms）：ページ遷移させず、その場でお礼を出す
+// 匿名一言フォーム（FormSubmit）：ページ遷移させず、その場でお礼を出す
 const impressionForm = document.querySelector(".comment-form");
 if (impressionForm) {
   impressionForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const body = new URLSearchParams(new FormData(impressionForm)).toString();
-    fetch("/", {
+    const payload = Object.fromEntries(new FormData(impressionForm).entries());
+    fetch(impressionForm.action, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify(payload)
     })
-      .then(() => {
+      .then((res) => {
+        if (!res.ok) throw new Error("送信に失敗しました");
         const input = impressionForm.querySelector(".comment-form__input");
         const submit = impressionForm.querySelector(".comment-form__submit");
         const thanks = impressionForm.querySelector(".comment-form__thanks");
@@ -657,7 +697,7 @@ if (impressionForm) {
         if (thanks) thanks.hidden = false;
       })
       .catch(() => {
-        impressionForm.submit(); // 失敗時は通常送信にフォールバック
+        alert("送信に失敗しました。時間をおいて、もう一度お試しください。");
       });
   });
 }
