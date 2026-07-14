@@ -136,6 +136,19 @@ const getTrackText = (element) => {
 
 const getCurrentEntryChoice = () => sessionStorage.getItem("entry_choice") || "";
 
+// 左ナビの「目標」は入口(経歴/強み)を通った人にだけ見せる。
+// entry_choice が立っている or 既に goals ページにいる場合に表示する。
+const revealGoalsNavIfEntered = () => {
+  const onGoalsPage = window.location.pathname.endsWith("/goals.html")
+    || window.location.pathname.endsWith("/goals");
+  if (!getCurrentEntryChoice() && !onGoalsPage) return;
+  document
+    .querySelectorAll(".nav-link--goals.is-gated")
+    .forEach((link) => link.classList.remove("is-gated"));
+};
+
+document.addEventListener("DOMContentLoaded", revealGoalsNavIfEntered);
+
 const getEntryChoiceFromHref = (href = "") => {
   if (href.includes("growth.html") || href.endsWith("/growth")) return "history";
   if (href.includes("strengths.html") || href.endsWith("/strengths")) return "strengths";
@@ -146,6 +159,9 @@ const getEntryChoiceFromHref = (href = "") => {
 const pushEntryChoice = (choice, method, sourceElement) => {
   if (!choice || sessionStorage.getItem("entry_choice")) return;
   sessionStorage.setItem("entry_choice", choice);
+
+  // 入口を選んだので、以降このセッションでは左ナビの「目標」を出す。
+  revealGoalsNavIfEntered();
 
   // 位置バイアス対策：入口カードで選んだ場合は「先(first)/後(second)」を記録する。
   // 入口順はランダム化しているので、集計で位置の影響を平均化でき、
@@ -678,6 +694,17 @@ const impressionForm = document.querySelector(".comment-form");
 if (impressionForm) {
   impressionForm.addEventListener("submit", (event) => {
     event.preventDefault();
+    // 入口選択（価値観/強み）を本文と一緒にメールへ届ける。匿名性は保つ（履歴/強み等のラベルのみ＝個人情報ではない）。
+    const entryField = impressionForm.querySelector('input[name="入口"]');
+    if (entryField) {
+      const choice = sessionStorage.getItem("entry_choice") || "";
+      const entryLabels = {
+        history: "価値観(経歴)から入った人",
+        strengths: "強みから入った人",
+        goals_direct: "直接ゴールへ来た人"
+      };
+      entryField.value = entryLabels[choice] || "入口選択なし";
+    }
     const payload = Object.fromEntries(new FormData(impressionForm).entries());
     fetch(impressionForm.action, {
       method: "POST",

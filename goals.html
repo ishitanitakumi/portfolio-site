@@ -32,7 +32,7 @@
       <a class="nav-link nav-link--overview" href="index.html" data-nav-item="overview" data-click-area="global_nav" data-click-name="overview" data-click-label="概要">概要</a>
       <a class="nav-link nav-link--episode1" href="growth.html" data-nav-item="episode1" data-click-area="global_nav" data-click-name="episode1_history" data-click-label="Episode 1: 経歴">Episode 1: 経歴</a>
       <a class="nav-link nav-link--strengths" href="strengths.html" data-nav-item="strengths" data-click-area="global_nav" data-click-name="episode2_strengths" data-click-label="Episode 2: 強み">Episode 2: 強み</a>
-      <a class="nav-link nav-link--goals active" href="goals.html" data-nav-item="goals" data-click-area="global_nav" data-click-name="episode3_goals" data-click-label="Episode 3: 目標">Episode 3: 目標</a>
+      <a class="nav-link nav-link--goals is-gated active" href="goals.html" data-nav-item="goals" data-click-area="global_nav" data-click-name="episode3_goals" data-click-label="Episode 3: 目標">Episode 3: 目標</a>
     </nav>
     <div class="sidebar-note">
       <strong>Roadmap</strong>
@@ -111,6 +111,8 @@
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
         <p class="comment-form__hp" hidden><label>入力しないでください: <input name="_honey"></label></p>
+        <input type="hidden" name="入口" value="">
+
         <textarea name="message" class="comment-form__input" rows="3" placeholder="ここに一言…" required></textarea>
         <button type="submit" class="comment-form__submit" data-click-area="comment" data-click-name="submit_impression" data-click-label="一言を送信">送信する</button>
         <p class="comment-form__thanks" hidden>ありがとうございます！受け取りました。</p>

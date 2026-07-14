@@ -277,6 +277,13 @@ a {
   text-transform: uppercase;
 }
 
+/* 入口(経歴/強み)を通った人にだけ「目標」を表示する。
+   入ってきて経歴も強みも押さず離脱した人には出さない（＝興味が無い層は切り捨てる）。
+   JS が entry_choice 成立時 or goals 到達時に is-gated を外して表示する。 */
+.nav-link--goals.is-gated {
+  display: none;
+}
+
 .nav a::before {
   content: "";
   position: absolute;
