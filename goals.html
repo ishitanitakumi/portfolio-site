@@ -99,28 +99,6 @@
       </div>
     </section>
 
-    <section class="like-cta" aria-label="いいね">
-      <p class="like-cta__text">最後まで見てくれてありがとうございます！<br>面白ければいいねをお願いします！</p>
-      <button type="button" class="reaction-like" id="reaction-like" data-reaction-target="goals" data-click-area="reaction" data-click-name="like_goals" data-click-label="いいね">
-        <span class="reaction-like__icon" aria-hidden="true">♥</span>
-        <span class="reaction-like__label">いいね</span>
-      </button>
-    </section>
-
-    <section class="comment-cta reveal" aria-label="匿名の一言">
-      <p class="comment-cta__text">よかったら一言もらえると嬉しいです（匿名でOK）<br><small>印象に残ったこと・気になったこと なんでも</small></p>
-      <form name="impression" method="POST" action="https://formsubmit.co/ajax/ishitani_takumi@cellmuller.com" class="comment-form">
-        <input type="hidden" name="_subject" value="自己紹介サイトに一言が届きました">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
-        <p class="comment-form__hp" hidden><label>入力しないでください: <input name="_honey"></label></p>
-        <input type="hidden" name="入口" value="">
-
-        <textarea name="message" class="comment-form__input" rows="3" placeholder="ここに一言…" required></textarea>
-        <button type="submit" class="comment-form__submit" data-click-area="comment" data-click-name="submit_impression" data-click-label="一言を送信">送信する</button>
-        <p class="comment-form__thanks" hidden>ありがとうございます！受け取りました</p>
-      </form>
-    </section>
   </main>
 
   <script src="js/script.js"></script>

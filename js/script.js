@@ -186,7 +186,7 @@ const pushEntryChoice = (choice, method, sourceElement) => {
 document.addEventListener("click", (event) => {
   const target = event.target.closest("a, button, [data-click-name]");
   if (!target) return;
-  if (target.matches(".intro-start, .reaction-like")) return;
+  if (target.matches(".intro-start")) return;
 
   const clickSource = target.closest("[data-click-name]") || target;
   const isHomePage = window.location.pathname.endsWith("/") || window.location.pathname.endsWith("/index.html");
@@ -631,33 +631,6 @@ if (goalRoadmap) {
   });
 }
 
-// いいね（ユーザーリアクション）計測：カスタムメトリクス用に数値も返す
-const likeButton = document.querySelector(".reaction-like");
-if (likeButton) {
-  let liked = false;
-  likeButton.addEventListener("click", () => {
-    if (liked) return;                 // 1ページ表示につき1回だけ（二重カウント防止）
-    liked = true;
-
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: "reaction",               // GTMトリガーの合図
-      reaction_type: "like",           // ディメンション：種類
-      reaction_target: likeButton.dataset.reactionTarget || window.location.pathname, // ディメンション：どこで
-      reaction_value: 1,               // メトリクス：数値（合計でいいね総数になる）
-      click_area: likeButton.dataset.clickArea || "reaction",
-      click_name: likeButton.dataset.clickName || "like_goals",
-      click_label: likeButton.dataset.clickLabel || "いいね",
-      entry_choice: getCurrentEntryChoice(),
-      page_path: window.location.pathname
-    });
-
-    likeButton.classList.add("is-liked");
-    const label = likeButton.querySelector(".reaction-like__label");
-    if (label) label.textContent = "ありがとうございます！";
-  });
-}
-
 // 入口フォークの位置バイアス対策：表示順をユーザーごとにランダム化する。
 // 左=経歴・右=強みの固定順だと「経歴が勝ったのは先に読まれた(左)からでは？」を
 // 潰せない。CSSのorderで並びを入れ替え（DOMは動かさない＝チラつき無し）、
@@ -689,42 +662,3 @@ entryForkCards.forEach((card) => {
   });
 });
 
-// 匿名一言フォーム（FormSubmit）：ページ遷移させず、その場でお礼を出す
-const impressionForm = document.querySelector(".comment-form");
-if (impressionForm) {
-  impressionForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    // 入口選択（価値観/強み）を本文と一緒にメールへ届ける。匿名性は保つ（履歴/強み等のラベルのみ＝個人情報ではない）。
-    const entryField = impressionForm.querySelector('input[name="入口"]');
-    if (entryField) {
-      const choice = sessionStorage.getItem("entry_choice") || "";
-      const entryLabels = {
-        history: "価値観(経歴)から入った人",
-        strengths: "強みから入った人",
-        goals_direct: "直接ゴールへ来た人"
-      };
-      entryField.value = entryLabels[choice] || "入口選択なし";
-    }
-    const payload = Object.fromEntries(new FormData(impressionForm).entries());
-    fetch(impressionForm.action, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-      },
-      body: JSON.stringify(payload)
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("送信に失敗しました");
-        const input = impressionForm.querySelector(".comment-form__input");
-        const submit = impressionForm.querySelector(".comment-form__submit");
-        const thanks = impressionForm.querySelector(".comment-form__thanks");
-        if (input) input.hidden = true;
-        if (submit) submit.hidden = true;
-        if (thanks) thanks.hidden = false;
-      })
-      .catch(() => {
-        alert("送信に失敗しました。時間をおいて、もう一度お試しください。");
-      });
-  });
-}
