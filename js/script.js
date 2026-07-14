@@ -23,6 +23,7 @@ function trackJourneyDepth() {
   const entryChoice = sessionStorage.getItem("entry_choice") || "";
   const visitedKey = "unique_pages_visited";
   const contentVisitedKey = "unique_content_pages_visited";
+  const contentViewCountKey = "content_page_view_count";
   let visitedPages = [];
   let contentVisitedPages = [];
 
@@ -51,7 +52,29 @@ function trackJourneyDepth() {
     sessionStorage.setItem(contentVisitedKey, JSON.stringify(contentVisitedPages));
   }
 
+  let contentPageViewCount = Number(sessionStorage.getItem(contentViewCountKey) || 0);
+  if (!isHomePage) {
+    contentPageViewCount += 1;
+    sessionStorage.setItem(contentViewCountKey, String(contentPageViewCount));
+  }
+
   window.dataLayer = window.dataLayer || [];
+
+  if (!isHomePage && contentPageViewCount >= 3 && contentPageViewCount % 3 === 0) {
+    const contentRoundCount = contentPageViewCount / 3;
+    const roundSentKey = `content_page_round_${contentRoundCount}_sent`;
+    if (!sessionStorage.getItem(roundSentKey)) {
+      sessionStorage.setItem(roundSentKey, "1");
+      window.dataLayer.push({
+        event: "content_page_round",
+        content_round_count: contentRoundCount,
+        content_page_view_count: contentPageViewCount,
+        unique_page_count: contentVisitedPages.length,
+        entry_choice: entryChoice,
+        page_path: currentPath
+      });
+    }
+  }
 
   if (contentVisitedPages.length >= 3 && !sessionStorage.getItem("unique_three_page_view_sent")) {
     sessionStorage.setItem("unique_three_page_view_sent", "1");
@@ -109,12 +132,41 @@ const getTrackText = (element) => {
     || "";
 };
 
+const getCurrentEntryChoice = () => sessionStorage.getItem("entry_choice") || "";
+
+const getEntryChoiceFromHref = (href = "") => {
+  if (href.includes("growth.html") || href.endsWith("/growth")) return "history";
+  if (href.includes("strengths.html") || href.endsWith("/strengths")) return "strengths";
+  if (href.includes("goals.html") || href.endsWith("/goals")) return "goals_direct";
+  return "";
+};
+
+const pushEntryChoice = (choice, method, sourceElement) => {
+  if (!choice || sessionStorage.getItem("entry_choice")) return;
+  sessionStorage.setItem("entry_choice", choice);
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "entry_choice",
+    choice,
+    entry_method: method,
+    click_area: sourceElement?.dataset.clickArea || "",
+    click_name: sourceElement?.dataset.clickName || "",
+    click_label: sourceElement?.dataset.clickLabel || getTrackText(sourceElement),
+    page_path: window.location.pathname
+  });
+};
+
 document.addEventListener("click", (event) => {
   const target = event.target.closest("a, button, [data-click-name]");
   if (!target) return;
   if (target.matches(".intro-start, .reaction-like")) return;
 
   const clickSource = target.closest("[data-click-name]") || target;
+  const isHomePage = window.location.pathname.endsWith("/") || window.location.pathname.endsWith("/index.html");
+  if (isHomePage && target.matches("a")) {
+    pushEntryChoice(getEntryChoiceFromHref(target.getAttribute("href") || ""), "nav", clickSource);
+  }
 
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
@@ -127,6 +179,7 @@ document.addEventListener("click", (event) => {
     click_area: clickSource.dataset.clickArea || "",
     click_name: clickSource.dataset.clickName || "",
     click_label: clickSource.dataset.clickLabel || getTrackText(target),
+    entry_choice: getCurrentEntryChoice(),
     button_type: target.tagName.toLowerCase(),
     button_location: target.closest("nav")?.getAttribute("aria-label") || target.closest("aside")?.className || target.closest("main")?.className || "",
     page_path: window.location.pathname
@@ -163,6 +216,7 @@ if (introSplash) {
       click_area: "intro",
       click_name: "play_intro",
       click_label: "イントロを再生する",
+      entry_choice: getCurrentEntryChoice(),
       button_type: "button",
       button_location: "intro-splash",
       page_path: window.location.pathname
@@ -512,6 +566,7 @@ if (goalRoadmap) {
       event: "goal_stage_choice",
       goal_stage: stage,
       goal_stage_label: activeButton ? getTrackText(activeButton) : stage,
+      entry_choice: getCurrentEntryChoice(),
       page_path: window.location.pathname
     });
 
@@ -552,6 +607,7 @@ if (likeButton) {
       click_area: likeButton.dataset.clickArea || "reaction",
       click_name: likeButton.dataset.clickName || "like_goals",
       click_label: likeButton.dataset.clickLabel || "いいね",
+      entry_choice: getCurrentEntryChoice(),
       page_path: window.location.pathname
     });
 
@@ -566,16 +622,7 @@ if (likeButton) {
 document.querySelectorAll(".entry-card").forEach((card) => {
   card.addEventListener("click", () => {
     const choice = card.dataset.entryChoice || "";
-    if (!sessionStorage.getItem("entry_choice")) {
-      sessionStorage.setItem("entry_choice", choice);
-    }
-
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: "entry_choice",                        // GTMトリガーの合図
-      choice,                                       // ディメンション：history / strengths
-      page_path: window.location.pathname
-    });
+    pushEntryChoice(choice, "entry_card", card);
     // 補足：<a>のクリックで即遷移するが、GA4イベントタグはsendBeaconで送るため
     // 通常は遷移前に送信される。DebugViewで発火を必ず確認すること。
   });
