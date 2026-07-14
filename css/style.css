@@ -914,13 +914,14 @@ body.log-overlay-open .page {
   grid-template-columns: minmax(280px, 42%) minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
   gap: clamp(22px, 4vw, 54px);
+  height: calc(100vh - clamp(28px, 6vw, 68px));
   max-height: calc(100vh - clamp(28px, 6vw, 68px));
   padding: clamp(18px, 3vw, 34px);
   border: none;
   border-radius: 10px;
   background: #080808;
   box-shadow: 0 0 0 999vmax rgba(0, 0, 0, 0.78), 0 34px 120px rgba(229, 9, 20, 0.28), 0 22px 64px rgba(0, 0, 0, 0.70);
-  overflow: auto;
+  overflow: hidden;
 }
 
 .log-overlay[hidden] {
@@ -1006,6 +1007,12 @@ body.log-overlay-open .page {
   grid-row: 2;
   align-self: start;
   max-width: 820px;
+  min-height: 0;
+  height: 100%;
+  padding-right: 12px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .log-overlay-detail p {
@@ -1013,6 +1020,23 @@ body.log-overlay-open .page {
   color: rgba(255, 255, 255, 0.82);
   font-size: clamp(15px, 1.35vw, 18px);
   line-height: 1.9;
+}
+
+.log-detail-art {
+  display: none;
+}
+
+.log-overlay .log-detail-art--exodia {
+  display: block;
+  position: fixed;
+  top: clamp(58px, 8vw, 120px);
+  right: clamp(34px, 7vw, 120px);
+  z-index: 0;
+  width: clamp(180px, 24vw, 360px);
+  max-width: 34vw;
+  opacity: 0.24;
+  filter: saturate(0.85) contrast(1.08);
+  pointer-events: none;
 }
 
 .log-overlay-close {
@@ -1625,6 +1649,10 @@ p {
   line-height: 1.9;
 }
 
+.goal-stage-placeholder__mobile {
+  display: none;
+}
+
 .goal-stage-panel__term {
   display: block;
   margin-bottom: 12px;
@@ -1673,6 +1701,14 @@ p {
 
   .goal-stage-panels {
     min-height: auto;
+  }
+
+  .goal-stage-placeholder__desktop {
+    display: none;
+  }
+
+  .goal-stage-placeholder__mobile {
+    display: inline;
   }
 }
 
@@ -2138,12 +2174,13 @@ p {
   grid-template-columns: minmax(280px, 42%) minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
   gap: clamp(22px, 4vw, 54px);
+  height: calc(100vh - clamp(28px, 6vw, 68px));
   max-height: calc(100vh - clamp(28px, 6vw, 68px));
   padding: clamp(18px, 3vw, 34px);
   border-color: transparent;
   background: #080808;
   box-shadow: 0 0 0 999vmax rgba(0, 0, 0, 0.78), 0 34px 120px rgba(229, 9, 20, 0.28), 0 22px 64px rgba(0, 0, 0, 0.70);
-  overflow: auto;
+  overflow: hidden;
   animation: none;
   transform: none !important;
   transition: none;
@@ -2471,8 +2508,10 @@ p {
   grid-row: 2;
   align-self: start;
   max-width: 820px;
-  padding: 0;
-  overflow: visible;
+  min-height: 0;
+  height: 100%;
+  padding: 0 12px 0 0;
+  overflow-y: auto;
   animation: goal-detail-rise 420ms ease both;
 }
 
@@ -2566,13 +2605,14 @@ p {
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   gap: clamp(22px, 4vw, 56px);
   max-width: none;
+  height: calc(100vh - clamp(28px, 6vw, 68px));
   max-height: calc(100vh - clamp(28px, 6vw, 68px));
   padding: clamp(18px, 3vw, 34px);
   animation: goal-fullscreen-pop 560ms cubic-bezier(.14, .9, .2, 1) both;
   border-color: transparent;
   background: #080808;
   box-shadow: 0 0 0 999vmax rgba(0, 0, 0, 0.78), 0 34px 120px rgba(229, 9, 20, 0.30), 0 22px 64px rgba(0, 0, 0, 0.70);
-  overflow: auto;
+  overflow: hidden;
 }
 
 .goal-card summary::-webkit-details-marker {
@@ -2784,9 +2824,11 @@ p {
   align-self: start;
   z-index: 2;
   max-width: 920px;
+  min-height: 0;
+  height: 100%;
   max-height: none;
-  padding: 0;
-  overflow: visible;
+  padding: 0 12px 0 0;
+  overflow-y: auto;
 }
 
 .goal-card[open] .goal-detail p {
@@ -3058,11 +3100,12 @@ p {
   .log-card[open] {
     inset: 10px;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
     gap: 16px;
+    height: calc(100vh - 20px);
     max-height: calc(100vh - 20px);
     padding: 18px;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .log-card[open] .log-thumb,
@@ -3093,7 +3136,10 @@ p {
   .log-card[open] .log-detail {
     grid-row: 3;
     max-width: none;
-    padding: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 0 8px 0 0;
+    overflow-y: auto;
   }
 
   .log-card[open] .log-detail p {
@@ -3104,12 +3150,13 @@ p {
   .log-overlay {
     inset: 10px;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
     align-content: start;
     gap: 16px;
+    height: calc(100vh - 20px);
     max-height: calc(100vh - 20px);
     padding: 18px;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .log-overlay-figure,
@@ -3146,6 +3193,10 @@ p {
   .log-overlay-detail {
     grid-row: 3;
     max-width: none;
+    min-height: 0;
+    height: 100%;
+    padding-right: 8px;
+    overflow-y: auto;
   }
 
   .log-overlay-detail p {
@@ -3153,14 +3204,19 @@ p {
     line-height: 1.85;
   }
 
+  .log-overlay .log-detail-art--exodia {
+    display: none;
+  }
+
   .goal-card[open] {
     inset: 10px;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto auto;
+    grid-template-rows: auto auto minmax(120px, 34vh) minmax(0, 1fr) auto;
     gap: 14px;
+    height: calc(100vh - 20px);
     max-height: calc(100vh - 20px);
     padding: 18px;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .goal-card[open] summary {
@@ -3195,8 +3251,11 @@ p {
 
   .goal-card[open] .goal-detail {
     grid-row: 4;
+    min-height: 0;
+    height: 100%;
     max-height: none;
-    overflow: visible;
+    padding-right: 8px;
+    overflow-y: auto;
   }
 
   .goal-card[open] .goal-detail p {
@@ -3269,29 +3328,33 @@ p {
 
 /* ===== Entry fork (概要: 経歴 / 強み の対等な2択) ===== */
 .entry-fork {
-  margin-top: 26px;
+  margin-top: 34px;
 }
 .entry-fork__title {
-  margin: 0 0 16px;
-  font-size: clamp(20px, 2.4vw, 28px);
+  margin: 0 0 22px;
+  font-size: clamp(24px, 2.8vw, 34px);
+  font-weight: 800;
 }
 .entry-fork__cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 24px;
 }
 .entry-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  min-height: 200px;
-  padding: 30px 26px;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 260px;
+  padding: 38px 34px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
   background: #181818;
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
   color: #fff;
   text-decoration: none;
+  text-align: center;
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 .entry-card:hover,
@@ -3302,34 +3365,37 @@ p {
   outline: none;
 }
 .entry-card__label {
-  font-size: clamp(22px, 2.2vw, 30px);
-  font-weight: 900;
-  line-height: 1.28;
+  max-width: 100%;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.36;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 .entry-card__sub {
-  order: -1;
-  width: fit-content;
-  padding: 5px 10px;
+  padding: 7px 16px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
-  color: rgba(255, 255, 255, 0.72);
+  color: #fff;
   background: rgba(255, 255, 255, 0.07);
-  font-size: 13px;
-  font-weight: 900;
+  font-size: clamp(17px, 1.5vw, 22px);
+  font-weight: 800;
 }
 .entry-card__cta {
-  margin-top: auto;
-  align-self: flex-start;
-  padding: 8px 18px;
+  margin-top: 8px;
+  padding: 12px 28px;
   border-radius: 4px;
   background: var(--red);
-  font-weight: 900;
-  font-size: 14px;
+  font-weight: 800;
+  font-size: 18px;
 }
 @media (max-width: 640px) {
   .entry-fork__cards {
     grid-template-columns: 1fr;
+  }
+
+  .entry-card__label {
+    font-size: 22px;
   }
 }
 
