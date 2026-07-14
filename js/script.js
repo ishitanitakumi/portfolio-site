@@ -45,22 +45,24 @@ function trackJourneyDepth() {
   }
 
   const normalizedPath = currentPath.replace(/\/$/, "");
-  const isHomePage = normalizedPath === "" || normalizedPath.endsWith("/index.html");
+  const currentFile = normalizedPath.split("/").pop() || "index.html";
+  const contentPageFiles = ["growth.html", "strengths.html", "goals.html"];
+  const isContentPage = contentPageFiles.includes(currentFile);
 
-  if (!isHomePage && !contentVisitedPages.includes(currentPath)) {
+  if (isContentPage && !contentVisitedPages.includes(currentPath)) {
     contentVisitedPages.push(currentPath);
     sessionStorage.setItem(contentVisitedKey, JSON.stringify(contentVisitedPages));
   }
 
   let contentPageViewCount = Number(sessionStorage.getItem(contentViewCountKey) || 0);
-  if (!isHomePage) {
+  if (isContentPage) {
     contentPageViewCount += 1;
     sessionStorage.setItem(contentViewCountKey, String(contentPageViewCount));
   }
 
   window.dataLayer = window.dataLayer || [];
 
-  if (!isHomePage && contentPageViewCount >= 3 && contentPageViewCount % 3 === 0) {
+  if (isContentPage && contentPageViewCount >= 3 && contentPageViewCount % 3 === 0) {
     const contentRoundCount = contentPageViewCount / 3;
     const roundSentKey = `content_page_round_${contentRoundCount}_sent`;
     if (!sessionStorage.getItem(roundSentKey)) {
@@ -168,6 +170,10 @@ document.addEventListener("click", (event) => {
     pushEntryChoice(getEntryChoiceFromHref(target.getAttribute("href") || ""), "nav", clickSource);
   }
 
+  trackSiteButtonClick(target, clickSource);
+});
+
+const trackSiteButtonClick = (target, clickSource = target.closest("[data-click-name]") || target) => {
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
     event: "site_button_click",
@@ -184,7 +190,7 @@ document.addEventListener("click", (event) => {
     button_location: target.closest("nav")?.getAttribute("aria-label") || target.closest("aside")?.className || target.closest("main")?.className || "",
     page_path: window.location.pathname
   });
-});
+};
 
 if (introSplash) {
   const introStorageKey = "intro_start_played";
@@ -385,6 +391,7 @@ const openLogCard = (card) => {
   overlay.querySelector(".log-overlay-close")?.addEventListener("click", closeLogCards);
   overlay.querySelector(".next-episode")?.addEventListener("click", (event) => {
     event.preventDefault();
+    trackSiteButtonClick(event.currentTarget);
     event.stopPropagation();
     goToNextLogCard(card);
   });
@@ -490,6 +497,7 @@ logCards.forEach((card) => {
 
 historyStops.forEach((stop) => {
   stop.addEventListener("click", (event) => {
+    trackSiteButtonClick(stop);
     event.stopPropagation();
     const index = Number(stop.dataset.logIndex);
     const card = logCards[index];
@@ -501,6 +509,7 @@ historyStops.forEach((stop) => {
 
 document.querySelectorAll(".log-card .next-episode").forEach((button) => {
   button.addEventListener("click", (event) => {
+    trackSiteButtonClick(button);
     event.stopPropagation();
 
     const currentCard = button.closest(".log-card");
