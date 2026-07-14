@@ -2010,6 +2010,10 @@ p {
   transform: translateX(-50%);
 }
 
+.sugoroku__hint-swipe {
+  display: none;
+}
+
 .sugoroku__hint {
   margin: 14px 0 0;
   color: rgba(255, 255, 255, 0.70);
@@ -3006,6 +3010,39 @@ p {
     grid-template-columns: 1fr;
   }
 
+  /* 強み3カード：スマホは1列に積む（2列だと文字が潰れる） */
+  .skill-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-stack .skill-block:nth-child(3) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .skill-stack .skill-block:nth-child(1) .skill-copy,
+  .skill-stack .skill-block:nth-child(3) .skill-copy {
+    transform: none;
+  }
+
+  .skill-stack .skill-block:nth-child(1) .skill-num,
+  .skill-stack .skill-block:nth-child(3) .skill-num {
+    top: 20px;
+  }
+
+  .skill-visual {
+    min-height: 230px;
+  }
+
+  .skill-stack .skill-copy {
+    padding-top: 84px; /* 番号バッジ(top:20px+44px)と重ならない余白 */
+  }
+
+  .skill-copy strong {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
   .skill-card summary {
     min-height: 270px;
     padding: 0;
@@ -3042,6 +3079,11 @@ p {
   .sugoroku__board {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .sugoroku__hint-swipe {
+    display: inline;
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .history-game {

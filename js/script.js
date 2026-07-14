@@ -226,6 +226,7 @@ if (introSplash) {
   }
 
   let introStarted = Boolean(sessionStorage.getItem(introStorageKey));
+  let introAutoStarted = false;
 
   if (introStarted) {
     introSplash.classList.remove("is-waiting");
@@ -244,8 +245,8 @@ if (introSplash) {
       button_id: introStartButton?.id || "",
       button_class: introStartButton?.className || "",
       click_area: "intro",
-      click_name: "play_intro",
-      click_label: "イントロを再生する",
+      click_name: introAutoStarted ? "play_intro_auto" : "play_intro",
+      click_label: introAutoStarted ? "イントロ自動再生" : "イントロを再生する",
       entry_choice: getCurrentEntryChoice(),
       button_type: "button",
       button_location: "intro-splash",
@@ -277,6 +278,18 @@ if (introSplash) {
   introStartButton?.addEventListener("pointerdown", startIntro);
   introStartButton?.addEventListener("touchend", startIntro);
   introStartButton?.addEventListener("click", startIntro);
+
+  // ボタンを押さずに待ち続ける人向け：2秒で自動スタート。
+  // ユーザー操作なしのため音声はブラウザにブロックされ得るが、撃ちっぱなしなので害なし。
+  // 手動クリックとの区別のため click_name は play_intro_auto で送る。
+  if (!introStarted) {
+    window.setTimeout(() => {
+      if (introStarted) return;
+      introAutoStarted = true;
+      playIntroSound();
+      finishIntroStart();
+    }, 2000);
+  }
 
   const handleIntroKeydown = (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
